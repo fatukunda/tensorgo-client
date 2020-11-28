@@ -3,6 +3,8 @@ import axios from "axios";
 import { Form, Button, Alert } from "react-bootstrap";
 import { useFormFields } from "../lib/hooksLib";
 
+const baseUrl = process.env.REACT_APP_SERVER_URL;
+
 const UserEditForm = ({ user, refreshUsers, closeModal, refreshCsvData }) => {
   const [fields, handleFieldChange] = useFormFields({
     name: user.name,
@@ -27,7 +29,7 @@ const UserEditForm = ({ user, refreshUsers, closeModal, refreshCsvData }) => {
         user.gender !== fields.gender
       ) {
         const response = await axios.patch(
-          `http://localhost:3000/users/${user.id}`,
+          `${baseUrl}/users/${user.id}`,
           userData
         );
         const { message } = response.data;

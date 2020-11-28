@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CSVLink, CSVDownload } from "react-csv";
+import { CSVLink } from "react-csv";
 import { Alert, Button, Spinner } from "react-bootstrap";
 import axios from "axios";
 import Pagination from "react-pagination-bootstrap";
@@ -18,9 +18,11 @@ const Users = () => {
   const [error, setError] = useState("");
   const [csvData, setCsvData] = useState([]);
 
+  const baseUrl = process.env.REACT_APP_SERVER_URL;
+
   const fetchUsers = async (pageNumber = 1) => {
     const response = await axios.get(
-      `http://localhost:3000/users?page=${pageNumber}`
+      `${baseUrl}/users?page=${pageNumber}`
     );
     const { rows, count } = response.data;
     setUsers(rows);
@@ -28,13 +30,14 @@ const Users = () => {
   };
 
   const fetchCsvData = async() => {
-    const response = await axios.get("http://localhost:3000/download/csv");
+    const response = await axios.get(`${baseUrl}/download/csv`);
     setCsvData(response.data);
   }
 
   useEffect(() => {
     fetchUsers();
     fetchCsvData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handlePageChange = async (pageNumber) => {
@@ -50,7 +53,7 @@ const Users = () => {
   const populateDatabase = async () => {
     setIsloading(true);
     try {
-      const response = await axios.get("http://localhost:3000/users/populate");
+      const response = await axios.get(`${baseUrl}/users/populate`);
       const { message } = response.data;
       setDbPopulateProgress(message);
       setIsloading(false);
@@ -111,14 +114,6 @@ const Users = () => {
       ) : (
         <div className="row">
           <div className="col-md-12">
-            {/* <Button
-              variant="secondary"
-              className="mt-4"
-              size="sm"
-              onClick={downloadCsv}
-            >
-              Download as CSV
-            </Button> */}
             <CSVLink
               data={csvData}
               filename={"users.csv"}
